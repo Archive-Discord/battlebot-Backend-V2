@@ -5,6 +5,7 @@ COPY . ./app
 
 WORKDIR /app
 
+COPY .env .env.production.local
 RUN yarn
 
 EXPOSE 3001
