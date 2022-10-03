@@ -1,5 +1,4 @@
 variables:
-  SERVICE_NAME: battlebot-backend
   DOKCER_IMAGE_URL: registry.gitlab.com/archive87/battlebot-v2/backend
 
 stages:
@@ -33,7 +32,7 @@ deploy:
   stage: deploy
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker run -d -p 3001:3001 --rm --name $SERVICE_NAME $DOKCER_IMAGE_URL
+    - docker run -d -p 3001:3001 --rm --name battlebot-backend $DOKCER_IMAGE_URL
   tags:
     - battlebot-dev-backend
   only:

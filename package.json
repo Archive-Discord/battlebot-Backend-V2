@@ -6,6 +6,7 @@
   "license": "ISC",
   "scripts": {
     "start": "npm run build && cross-env NODE_ENV=production node dist/server.js",
+    "start:docker": "cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "clean": "rimraf dist/",
     "copy-files": "copyfiles -u 1 src/**/*.hbs dist/",
