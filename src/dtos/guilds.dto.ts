@@ -19,8 +19,9 @@ import {
 } from "class-validator";
 
 export class Embed {
+  @IsOptional()
   @IsString({ message: "제목을 입력해주세요" })
-  public title: string;
+  public title?: string;
 
   @IsOptional()
   @IsString({ message: "설명을 입력해주세요" })
@@ -32,12 +33,12 @@ export class Embed {
 }
 
 export class Button {
+  @IsOptional()
   @IsString({ message: "라벨을 입력해주세요" })
+  public label?: string;
   @IsOptional()
-  public label: string;
   @IsIn([1, 2, 3, 4, 5], { message: "올바른 색상을 선택해주세요" })
-  @IsOptional()
-  public color: string;
+  public color?: string;
 }
 
 export class Vote {
@@ -86,16 +87,13 @@ export class Verify {
   @IsString({ message: "인증완료시 삭제할 역할 선택해주세요" })
   public deleteRole?: string;
 
-  @IsDefined()
-  @IsObject()
   @IsOptional()
   @ValidateNested()
   public button?: Button;
 
-  @IsDefined()
-  @IsObject()
+  @IsOptional()
   @ValidateNested()
-  public embed: Embed;
+  public embed?: Embed;
 }
 
 export class Warning {
