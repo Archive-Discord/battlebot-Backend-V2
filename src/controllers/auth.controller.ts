@@ -50,6 +50,19 @@ class AuthController {
     }
   };
 
+  public kakaoLogInUrl = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const redirect = req.query.redirect;
+      const state = new Date().getTime().toString(36)
+      if(redirect) this.states.set(state, redirect as string)
+      res.redirect(
+        `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL}&response_type=code&scope=identify email guilds guilds.join&prompt=none&state=${state}`,
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction): Promise<void> => {
     try {
       res.setHeader('Set-Cookie', [`Authorization=; Max-age=0; domain=${COOKIE_DOMAIN}; path=/`]);
