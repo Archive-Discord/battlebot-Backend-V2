@@ -21,6 +21,7 @@ import customLinkSettingModel from "@/models/customLinkSetting.model";
 import verifyModel from "@/models/verify.model";
 import { Automod, DeleteAutomod, DeleteCustomLink, Verify } from "@/dtos/guilds.dto";
 import automodModel from "@/models/automod.model";
+import { premiumGuildCheck } from "@/utils/premium";
 
 class GuildsService {
   public async getGuildData(req: RequestWithGuild): Promise<any> {
@@ -150,7 +151,13 @@ class GuildsService {
   }
 
   public async getGuildAutomod(req: RequestWithGuild): Promise<any> {
-    const automods = await automodModel.find({ guildId: req.guild.id });
+    let automods = await automodModel.find({ guildId: req.guild.id });
+    if(automods.length > 5) {
+      if(!req.isPremium) {
+        await automodModel.deleteOne({ guildId: req.guild.id })
+        automods = await automodModel.find({ guildId: req.guild.id });
+      }
+    }
     return automods;
   }
 
@@ -227,6 +234,12 @@ class GuildsService {
       guild_id: req.guild.id,
       type: "random",
     });
+    
+    if(randomlink.length > 15) {
+      if(!req.isPremium) {
+        await automodModel.deleteOne({ guildId: req.guild.id })
+      }
+    }
     return {
       custom: customlink,
       random: randomlink,
