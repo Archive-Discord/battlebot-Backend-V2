@@ -2,12 +2,13 @@ import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import winston from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
-import { LOG_DIR } from '@config';
+import { LOG_DIR, LOG_FORMAT } from '@config';
 import loggerModel from '@models/logger.model';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { NextFunction, Response } from 'express';
 import { HttpException } from '@/exceptions/HttpException';
 import { v4 as uuidv4 } from 'uuid';
+import morgan from 'morgan';
 
 // logs dir
 const logDir: string = join(__dirname, LOG_DIR);
@@ -71,17 +72,6 @@ const stream = {
 const loggerMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
     const requestId = uuidv4()
-    const loggerSchema = new loggerModel()
-    loggerSchema.requestId = requestId;
-    loggerSchema.requestBody = req.body;
-    loggerSchema.requestHeders = req.headers;
-    loggerSchema.requestCookies = req.cookies;
-    loggerSchema.path = req.path;
-    loggerSchema.method = req.method;
-    loggerSchema.ip = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].toString() as string : undefined
-    loggerSchema.save((err) => {
-      if(err) new HttpException(500, 'Error Handler!');
-    })
     req.requestId = requestId
     next();
   } catch (error) {

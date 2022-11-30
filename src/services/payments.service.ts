@@ -157,7 +157,7 @@ class PaymentsService {
     return methods;
   }
 
-  public async confirmPayment(req: RequestWithUser): Promise<any> {
+  public async confirmPayment(req: RequestWithUser): Promise<boolean> {
     const { amount, orderId, paymentKey, phone, methodId } =
       req.body as confirmPayment;
     const confirmData = await tossClient("POST", `/v1/payments/${paymentKey}`, {
@@ -186,7 +186,7 @@ class PaymentsService {
       methodId,
     });
     await this.updateBilling(orderId, req, "tosspayments", method.methodKey);
-    return confirmData.data;
+    return true;
   }
 
   public async getSuccessOrderCultureland(req: RequestWithUser): Promise<any> {
@@ -378,10 +378,17 @@ class PaymentsService {
       throw new HttpException(404, req.t("payments.notFoundPayments"));
     if (payments.kakaoPayments)
       return await this.getKakaoPaymentsMetadata(req.params.orderId, req);
-    const paymentsMeta = await this.getTossPaymentsMetadata(
+    let paymentsMeta = await this.getTossPaymentsMetadata(
       req.params.orderId,
       req
     );
+    paymentsMeta = {
+      ...paymentsMeta,
+      payment: {
+        ...paymentsMeta.payment,
+        secret: undefined,
+      }
+    }
     return paymentsMeta;
   }
 
